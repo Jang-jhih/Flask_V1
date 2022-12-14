@@ -6,7 +6,7 @@ Created on Mon Dec 12 09:52:08 2022
 @author: jacob
 """
 from CRUD.CRUD import *
-
+import pymongo
 
 Response = CRUD()
 
@@ -36,5 +36,13 @@ for account in accounts:
     print(f'已刪除{account}')
 
 
+ServerPassword = 'test123'
+
+client = pymongo.MongoClient(f"mongodb+srv://test:{ServerPassword}@test.qk4mnho.mongodb.net/?retryWrites=true&w=majority"
+ ,tlsAllowInvalidCertificates=True)
+
+db = client.member_system
+collection = db.user
+cursor = collection.find()
 
 
