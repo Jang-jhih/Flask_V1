@@ -2,16 +2,25 @@ from flask import (Flask
                     # , request
                     # ,jsonify
                     )
-from flask_marshmallow import Marshmallow
+# from flask_marshmallow import Marshmallow
 from flask_restful import (Resource, Api
                             ,reqparse,abort)
 from bson.json_util import dumps
-from resources.db import *
+# from resources.db import *
 import json
 
 app = Flask(__name__)
 api = Api(app)
 
+
+import pymongo
+
+
+ServerPassword = 'test123'
+client = pymongo.MongoClient(f"mongodb+srv://test:{ServerPassword}@test.qk4mnho.mongodb.net/?retryWrites=true&w=majority" ,tlsAllowInvalidCertificates=True )
+
+db = client.member_system
+collection = db.user
 # ma = Marshmallow(app)
 
 # class UserSchema(ma.Schema):
