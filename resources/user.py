@@ -8,16 +8,38 @@ from flask_restful import (Resource, Api
 from bson.json_util import dumps
 # from resources.db import *
 import json
+import pymongo
+import socket
 
 app = Flask(__name__)
 api = Api(app)
 
 
-import pymongo
 
+# def get_ip():
+#     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+#     s.connect(("8.8.8.8", 80))
+#     ip = s.getsockname()[0]
+#     s.close()
+#     return ip
 
-ServerPassword = 'test123'
-client = pymongo.MongoClient(f"mongodb+srv://test:{ServerPassword}@test.qk4mnho.mongodb.net/?retryWrites=true&w=majority" ,tlsAllowInvalidCertificates=True )
+# ServerPassword = 'test123'
+# client = pymongo.MongoClient(f"mongodb+srv://test:{ServerPassword}@test.qk4mnho.mongodb.net/?retryWrites=true&w=majority" ,tlsAllowInvalidCertificates=True )
+
+# 本機ＩＰ
+# client = pymongo.MongoClient('localhost', 27017)
+# client = pymongo.MongoClient('127.0.0.1',27017)
+
+#host使用db的container的名稱
+
+client = pymongo.MongoClient('mongodb://DBcontainer:27017/')
+#Network interface card
+# NIC = get_ip()
+# client = pymongo.MongoClient(f'mongodb://{NIC}:27017/')
+
+#連線host ip，不需設定Volume
+# client = pymongo.MongoClient('mongodb://host.docker.internal:27017/')
+
 
 db = client.member_system
 collection = db.user
@@ -75,28 +97,32 @@ class TodoList(Resource):
         return arg,201,{'Header_test':'test'}
 
 class Todo(Resource):
-    def get(self, email):
-        abort_if_todo_doesnt_exist(email)
+    def get(self, usermail):
+        # print('test')
+        abort_if_todo_doesnt_exist(usermail)
 
-        JSON = dumps(collection.find({'email':email}))
+        JSON = dumps(collection.find({'email':usermail}))
         return json.loads(JSON)
+        # return 'test'
 
-    def put(self, email):
+    def put(self, usermail):
+        print('test')
         arg = parser.parse_args()
-        print(arg['password'])
-        collection.update_many({'email':email}
+        # print(arg['password'])
+        collection.update_many({'email':usermail}
                             ,{'$set':{'password':arg['password']}}
                             )
 
-        Message = {email:f"Password Change to {arg['password']}"}
+        Message = {usermail:f"Password Change to {arg['password']}"}
         return Message,201
+        # return 'test'
 
-    def delete(self,email):
-        abort_if_todo_doesnt_exist(email)
-        print(email)
-        collection.delete_one({'email':email})
+    def delete(self,usermail):
+        abort_if_todo_doesnt_exist(usermail)
+        print(usermail)
+        collection.delete_one({'email':usermail})
 
-        Message =  {'DeleteOK':email}
+        Message =  {'DeleteOK':usermail}
 
 
         return "",204,Message
@@ -104,7 +130,10 @@ class Todo(Resource):
 
 class GetStringQuery(Resource):
     def get(self):
-
+        parser = reqparse.RequestParser()
+        parser.add_argument('email', type=str, location='args')
         arg = parser.parse_args()
+        print(arg)
         JSON = dumps(collection.find({'email':arg['email']}))
         return json.loads(JSON)
+        # return parser

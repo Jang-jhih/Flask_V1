@@ -1,12 +1,17 @@
 from resources.user import *
 
 
-api.add_resource(Todo, '/api/v1/<email>')
-api.add_resource(TodoList, '/api/v1')
-api.add_resource(GetStringQuery, '/api/v1')
+MainPath = '/api/v1/users'
+UserMailPath = f'{MainPath}/email'
+api.add_resource(TodoList, MainPath)
+api.add_resource(Todo, f'{UserMailPath}/<usermail>')
+api.add_resource(GetStringQuery, f'{UserMailPath}', endpoint='test')
 
 
 
 if __name__ == '__main__':
-    app.run(debug=True,
-        port= 3000)
+    app.run(debug=True
+        ,host='0.0.0.0'
+        # 容器接口
+        ,port= 80
+        )

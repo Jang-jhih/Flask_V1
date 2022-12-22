@@ -1,0 +1,28 @@
+version: '3.7'
+services:
+  flask:
+    container_name: flask_api
+    build: .
+      # context: ./app
+    ports:
+      - 8888:80
+    networks:
+      - bridge_01
+    # links:
+    #   - "mongo:latest"
+    
+
+  
+  mongo:
+    container_name: DBcontainer
+    image: "mongo:latest"
+    ports:
+      - 27017:27017
+    networks:
+      - bridge_01
+
+networks:
+  bridge_01:
+
+# volumes:
+#   :
