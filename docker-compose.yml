@@ -8,6 +8,11 @@ services:
       - 8888:80
     networks:
       - bridge_01
+
+    env_file:
+      - .env
+    environment:
+      - MongoHost = ${DBhost}
     # links:
     #   - "mongo:latest"
     

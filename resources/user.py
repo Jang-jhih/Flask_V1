@@ -9,36 +9,27 @@ from bson.json_util import dumps
 # from resources.db import *
 import json
 import pymongo
-import socket
+import os
+
+#取得環境變數
+DBhost = os.environ.get('DBhost')
+
+
+
 
 app = Flask(__name__)
 api = Api(app)
 
 
 
-# def get_ip():
-#     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-#     s.connect(("8.8.8.8", 80))
-#     ip = s.getsockname()[0]
-#     s.close()
-#     return ip
 
-# ServerPassword = 'test123'
-# client = pymongo.MongoClient(f"mongodb+srv://test:{ServerPassword}@test.qk4mnho.mongodb.net/?retryWrites=true&w=majority" ,tlsAllowInvalidCertificates=True )
 
-# 本機ＩＰ
-# client = pymongo.MongoClient('localhost', 27017)
-# client = pymongo.MongoClient('127.0.0.1',27017)
 
-#host使用db的container的名稱
-
-client = pymongo.MongoClient('mongodb://DBcontainer:27017/')
-#Network interface card
-# NIC = get_ip()
-# client = pymongo.MongoClient(f'mongodb://{NIC}:27017/')
-
-#連線host ip，不需設定Volume
-# client = pymongo.MongoClient('mongodb://host.docker.internal:27017/')
+InDokcer = os.path.exists('/.dockerenv')
+if InDokcer == True:
+    client = pymongo.MongoClient(f'mongodb://{DBhost}:27017/')
+else:
+    client = pymongo.MongoClient('localhost', 27017)
 
 
 db = client.member_system
